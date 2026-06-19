@@ -3,245 +3,286 @@ import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 
 # --------------------------------------------------
-# CONFIGURACIÓN DE PÁGINA
+
+# CONFIGURACIÓN
+
 # --------------------------------------------------
 
 st.set_page_config(
-    page_title="Robot Optimizer",
-    page_icon="🤖",
-    layout="wide"
+page_title="Robot Optimizer",
+page_icon="🤖",
+layout="wide"
 )
 
 # --------------------------------------------------
+
 # ESTILOS
+
 # --------------------------------------------------
 
 st.markdown("""
+
 <style>
 
 .stApp {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    background: linear-gradient(
+        135deg,
+        #ff7b00,
+        #ff9500,
+        #ff5400
+    );
 }
 
-h1 {
-    color: #38bdf8;
-}
-
-h2, h3 {
-    color: white;
+h1, h2, h3, p, label, div {
+    color: white !important;
 }
 
 [data-testid="stMetricValue"] {
-    color: #22c55e;
+    color: #00ff88 !important;
+    font-size: 40px;
 }
 
 .stButton > button {
-    background-color: #06b6d4;
-    color: white;
-    border-radius: 12px;
+    background-color: #ffffff;
+    color: #ff5400;
     font-weight: bold;
-    height: 55px;
+    border-radius: 15px;
+    height: 60px;
     width: 100%;
     border: none;
+    font-size: 18px;
 }
 
 .stButton > button:hover {
-    background-color: #0891b2;
+    background-color: #ffe5d0;
+}
+
+div[data-baseweb="input"] {
+    background-color: rgba(255,255,255,0.15);
+    border-radius: 10px;
 }
 
 .result-box {
-    background-color: #1e293b;
+    background: rgba(255,255,255,0.15);
     padding: 20px;
     border-radius: 15px;
     color: white;
-    border: 1px solid #38bdf8;
 }
 
 </style>
+
 """, unsafe_allow_html=True)
 
 # --------------------------------------------------
+
 # TÍTULO
+
 # --------------------------------------------------
 
 st.title("🤖 Optimizador de Robots Industriales")
 
 st.write(
-    "Ingresá los costos y restricciones del problema para encontrar "
-    "la combinación de componentes de menor costo."
+"""
+Ingresá los costos y restricciones del problema.
+El sistema encontrará automáticamente la combinación
+de componentes que minimiza el costo total.
+"""
 )
 
 # --------------------------------------------------
+
 # COSTOS
+
 # --------------------------------------------------
 
-st.subheader("💰 Costos de los Componentes")
+st.subheader("💰 Costos de los Componentes (USD)")
 
 col1, col2, col3, col4, col5 = st.columns(5)
 
 with col1:
-    c1 = st.number_input(
-        "LiDAR",
-        min_value=0.0,
-        value=450.0
-    )
+c1 = st.number_input(
+"LiDAR",
+min_value=0,
+value=450,
+step=1
+)
 
 with col2:
-    c2 = st.number_input(
-        "Cámara",
-        min_value=0.0,
-        value=180.0
-    )
+c2 = st.number_input(
+"Cámara",
+min_value=0,
+value=180,
+step=1
+)
 
 with col3:
-    c3 = st.number_input(
-        "Procesador IA",
-        min_value=0.0,
-        value=350.0
-    )
+c3 = st.number_input(
+"Procesador IA",
+min_value=0,
+value=350,
+step=1
+)
 
 with col4:
-    c4 = st.number_input(
-        "Batería",
-        min_value=0.0,
-        value=220.0
-    )
+c4 = st.number_input(
+"Batería",
+min_value=0,
+value=220,
+step=1
+)
 
 with col5:
-    c5 = st.number_input(
-        "Motor",
-        min_value=0.0,
-        value=160.0
-    )
+c5 = st.number_input(
+"Motor",
+min_value=0,
+value=160,
+step=1
+)
 
 # --------------------------------------------------
+
 # RESTRICCIONES
+
 # --------------------------------------------------
 
 st.subheader("📋 Restricciones")
 
 r1 = st.number_input(
-    "Mínimo Sensores + Cámaras",
-    min_value=0,
-    value=10
+"Mínimo Sensores + Cámaras",
+min_value=0,
+value=10,
+step=1
 )
 
 r2 = st.number_input(
-    "Mínimo Procesadores + Baterías",
-    min_value=0,
-    value=8
+"Mínimo Procesadores + Baterías",
+min_value=0,
+value=8,
+step=1
 )
 
 r3 = st.number_input(
-    "Mínimo Motores",
-    min_value=0,
-    value=6
+"Mínimo Motores",
+min_value=0,
+value=6,
+step=1
 )
 
 presupuesto = st.number_input(
-    "Presupuesto máximo LiDAR + Cámaras (USD)",
-    min_value=0.0,
-    value=2500.0
+"Presupuesto máximo LiDAR + Cámaras",
+min_value=0,
+value=2500,
+step=1
 )
 
 max_componentes = st.number_input(
-    "Máximo total de componentes",
-    min_value=1,
-    value=25
+"Máximo total de componentes",
+min_value=1,
+value=25,
+step=1
 )
 
 min_lidar = st.number_input(
-    "Mínimo de sensores LiDAR",
-    min_value=0,
-    value=2
+"Mínimo de sensores LiDAR",
+min_value=0,
+value=2,
+step=1
 )
 
 # --------------------------------------------------
+
 # BOTÓN
+
 # --------------------------------------------------
 
 resolver = st.button("🚀 Resolver")
 
 # --------------------------------------------------
-# RESOLVER
+
+# RESOLUCIÓN
+
 # --------------------------------------------------
 
 if resolver:
 
-    c = [c1, c2, c3, c4, c5]
+```
+c = [c1, c2, c3, c4, c5]
 
-    A = [
-        [1, 1, 0, 0, 0],        # x1 + x2 >= r1
-        [0, 0, 1, 1, 0],        # x3 + x4 >= r2
-        [0, 0, 0, 0, 1],        # x5 >= r3
-        [0, 0, -1, 1, 0],       # x4 >= x3
-        [c1, c2, 0, 0, 0],      # costo percepción
-        [1, 1, 1, 1, 1],        # máximo componentes
-        [1, 0, 0, 0, 0]         # mínimo lidar
-    ]
+A = [
+    [1, 1, 0, 0, 0],
+    [0, 0, 1, 1, 0],
+    [0, 0, 0, 0, 1],
+    [0, 0, -1, 1, 0],
+    [c1, c2, 0, 0, 0],
+    [1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0]
+]
 
-    bl = [
-        r1,
-        r2,
-        r3,
-        0,
-        -np.inf,
-        -np.inf,
-        min_lidar
-    ]
+bl = [
+    r1,
+    r2,
+    r3,
+    0,
+    -np.inf,
+    -np.inf,
+    min_lidar
+]
 
-    bu = [
-        np.inf,
-        np.inf,
-        np.inf,
-        np.inf,
-        presupuesto,
-        max_componentes,
-        np.inf
-    ]
+bu = [
+    np.inf,
+    np.inf,
+    np.inf,
+    np.inf,
+    presupuesto,
+    max_componentes,
+    np.inf
+]
 
-    constraints = LinearConstraint(A, bl, bu)
+constraints = LinearConstraint(A, bl, bu)
 
-    bounds = Bounds(
-        [0, 0, 0, 0, 0],
-        [np.inf, np.inf, np.inf, np.inf, np.inf]
+bounds = Bounds(
+    [0, 0, 0, 0, 0],
+    [np.inf, np.inf, np.inf, np.inf, np.inf]
+)
+
+res = milp(
+    c=c,
+    constraints=constraints,
+    bounds=bounds,
+    integrality=[1, 1, 1, 1, 1]
+)
+
+st.divider()
+
+if res.success:
+
+    st.success("✅ Solución encontrada")
+
+    st.metric(
+        "Costo mínimo",
+        f"USD {int(round(res.fun))}"
     )
 
-    res = milp(
-        c=c,
-        constraints=constraints,
-        bounds=bounds,
-        integrality=[1, 1, 1, 1, 1]
+    st.subheader("🔧 Componentes óptimos")
+
+    nombres = [
+        "LiDAR",
+        "Cámaras",
+        "Procesadores IA",
+        "Baterías",
+        "Motores"
+    ]
+
+    for nombre, valor in zip(nombres, res.x):
+        st.write(
+            f"**{nombre}:** {int(round(valor))}"
+        )
+
+else:
+
+    st.error(
+        "❌ No existe una solución factible para las restricciones ingresadas."
     )
 
-    st.divider()
-
-    if res.success:
-
-        st.success("✅ Solución encontrada")
-
-        st.metric(
-            label="Costo mínimo",
-            value=f"USD {res.fun:,.2f}"
-        )
-
-        st.subheader("🔧 Componentes óptimos")
-
-        nombres = [
-            "LiDAR",
-            "Cámaras",
-            "Procesadores IA",
-            "Baterías",
-            "Motores"
-        ]
-
-        for nombre, valor in zip(nombres, res.x):
-            st.write(f"**{nombre}:** {int(round(valor))}")
-
-    else:
-
-        st.error(
-            "❌ No existe una solución factible para las restricciones ingresadas."
-        )
-
-        st.write(res.message)
+    st.write(res.message)
+```
