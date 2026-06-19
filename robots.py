@@ -38,8 +38,8 @@ h1, h2, h3, p, label {
 }
 
 .stButton > button {
-    background-color: white;
-    color: #ff5400;
+    background-color: #222222;
+    color: white !important;
     font-weight: bold;
     border-radius: 12px;
     height: 60px;
