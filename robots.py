@@ -210,7 +210,7 @@ if resolver:
     constraints = LinearConstraint(A, bl, bu)
 
     bounds = Bounds(
-        [0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1],
         [np.inf, np.inf, np.inf, np.inf, np.inf]
     )
 
