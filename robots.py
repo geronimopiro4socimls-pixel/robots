@@ -130,7 +130,7 @@ r1 = st.number_input(
 
 r2 = st.number_input(
     "Mínimo Procesadores + Baterías",
-    min_value=0,
+    min_value=1,
     value=8,
     step=1
 )
