@@ -78,7 +78,7 @@ col1, col2, col3, col4, col5 = st.columns(5)
 with col1:
     c1 = st.number_input(
         "LiDAR",
-        min_value=0,
+        min_value=1,
         value=450,
         step=1
     )
@@ -86,7 +86,7 @@ with col1:
 with col2:
     c2 = st.number_input(
         "Cámara",
-        min_value=0,
+        min_value=1,
         value=180,
         step=1
     )
@@ -94,7 +94,7 @@ with col2:
 with col3:
     c3 = st.number_input(
         "Procesador IA",
-        min_value=0,
+        min_value=1,
         value=350,
         step=1
     )
@@ -102,7 +102,7 @@ with col3:
 with col4:
     c4 = st.number_input(
         "Batería",
-        min_value=0,
+        min_value=1,
         value=220,
         step=1
     )
@@ -110,7 +110,7 @@ with col4:
 with col5:
     c5 = st.number_input(
         "Motor",
-        min_value=0,
+        min_value=1,
         value=160,
         step=1
     )
